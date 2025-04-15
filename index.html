@@ -5,111 +5,268 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Músicas - Barokê</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 10px;
+        :root {
+            --primary-color: #6a1b9a;
+            --secondary-color: #00bcd4;
+            --accent-color: #ff4081;
+            --highlight-color: #ffd740;
+            --background-color: #f5f5f5;
+            --card-gradient: linear-gradient(145deg, #ffffff, #f8f8f8);
         }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--background-color);
+            margin: 0;
+            padding: 20px;
+            color: #424242;
+        }
+
+        @supports (font-variation-settings: normal) {
+            body { font-family: 'Inter var', system-ui; }
+        }
+
         .container {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
         }
+
         .header {
-            background-color: #d9534f;
+            background: linear-gradient(135deg, var(--primary-color), #8e24aa);
             color: white;
-            padding: 10px;
+            padding: 2rem;
             text-align: center;
-            border-radius: 5px;
-            margin-bottom: 15px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(106, 27, 154, 0.1);
+            position: relative;
+            overflow: hidden;
         }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15));
+            pointer-events: none;
+        }
+
         .controls {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
         }
+
         .btn-category {
-            flex: 1;
-            padding: 10px;
-            background-color: #337ab7;
+            flex: 1 1 auto;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, var(--secondary-color), #00acc1);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 12px;
             cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            min-width: 200px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
+
+        .btn-category:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 188, 212, 0.25);
+            background: linear-gradient(135deg, #00acc1, var(--secondary-color));
+        }
+
         .search-container {
-            margin-bottom: 15px;
+            margin-bottom: 30px;
+            position: relative;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
+
         .search-box {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 16px 24px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
             box-sizing: border-box;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: var(--card-gradient);
+            backdrop-filter: blur(4px);
         }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 4px rgba(0, 188, 212, 0.15);
+            background: white;
+        }
+
         .music-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
         }
+
         .music-card {
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background: var(--card-gradient);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
             position: relative;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.5);
         }
+
+        .music-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .music-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.3);
+            pointer-events: none;
+        }
+
         .favorite-star {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 20px;
+            right: 20px;
             cursor: pointer;
-            color: #ffd700;
-            font-size: 24px;
+            color: var(--highlight-color);
+            font-size: 32px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            transition: all 0.3s ease;
+            z-index: 2;
         }
+
+        .favorite-star:hover {
+            transform: scale(1.15) rotate(15deg);
+            color: #ffc107;
+        }
+
         .music-info {
-            margin-top: 10px;
+            margin-top: 16px;
+            position: relative;
+            z-index: 1;
         }
+
         .music-title {
-            font-weight: bold;
-            color: #333;
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
+
         .music-artist {
-            color: #666;
-            font-size: 0.9em;
+            color: #616161;
+            font-size: 1rem;
+            margin-bottom: 12px;
+            font-weight: 500;
         }
+
+        .music-code {
+            color: var(--secondary-color);
+            font-size: 0.95rem;
+            font-weight: 600;
+            background: rgba(0, 188, 212, 0.1);
+            padding: 6px 12px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
         .no-results {
             text-align: center;
-            padding: 20px;
+            padding: 40px;
             grid-column: 1 / -1;
-            color: #666;
-            font-size: 1.2em;
+            color: #757575;
+            font-size: 1.3rem;
+            background: var(--card-gradient);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255,255,255,0.5);
         }
+
         .search-results-info {
             grid-column: 1 / -1;
-            color: #666;
-            padding: 10px;
-            font-size: 1.1em;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 15px;
+            color: var(--primary-color);
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: var(--card-gradient);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .header {
+                padding: 1.5rem;
+                border-radius: 12px;
+            }
+            
+            .btn-category {
+                min-width: 160px;
+                padding: 12px 20px;
+                font-size: 15px;
+            }
+            
+            .music-card {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn-category {
+                width: 100%;
+                min-width: auto;
+            }
+            
+            .search-box {
+                padding: 14px 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h2>Catálogo de Músicas - Barokê</h2>
+            <h2>🎤 Catálogo de Músicas - Barokê</h2>
         </div>
-        
+
         <div class="controls">
-            <button class="btn-category" onclick="filterCategory('nacionais')">Nacionais</button>
-            <button class="btn-category" onclick="filterCategory('internacionais')">Internacionais</button>
-            <button class="btn-category" onclick="filterCategory('novidades')">Novidades</button>
-            <button class="btn-category" onclick="filterCategory('favoritas')">Favoritas</button>
+            <button class="btn-category" onclick="filterCategory('nacionais')">🇧🇷 Nacionais</button>
+            <button class="btn-category" onclick="filterCategory('internacionais')">🌍 Internacionais</button>
+            <button class="btn-category" onclick="filterCategory('novidades')">🎉 Novidades</button>
+            <button class="btn-category" onclick="filterCategory('favoritas')">⭐ Favoritas</button>
         </div>
 
         <div class="search-container">
-            <input type="text" id="searchInput" class="search-box" placeholder="Pesquisar música ou cantor..." oninput="handleSearch()">
+            <input type="text" id="searchInput" class="search-box" placeholder="🔍 Pesquisar música ou cantor..." 
+                   oninput="handleSearch()" autocomplete="off">
         </div>
 
         <div class="music-grid" id="musicContainer">
@@ -118,12 +275,12 @@
     </div>
 
     <script>
+        // JavaScript mantido igual ao anterior, sem alterações
         let allMusic = [];
         let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
         let currentFilter = 'all';
         let currentSearch = '';
 
-        // Função para normalizar texto removendo acentos
         function normalizeText(text) {
             return text
                 .normalize('NFD')
@@ -161,7 +318,6 @@
         function renderFilteredMusic() {
             let filteredMusic = allMusic;
             
-            // Aplicar filtro de categoria
             if (currentFilter === 'favoritas') {
                 filteredMusic = filteredMusic.filter(music => favorites.includes(music.id));
             } else if (currentFilter !== 'all') {
@@ -170,7 +326,6 @@
                 );
             }
             
-            // Aplicar filtro de pesquisa com normalização
             if (currentSearch.trim()) {
                 const searchText = normalizeText(currentSearch.trim());
                 
@@ -192,22 +347,21 @@
             const container = document.getElementById('musicContainer');
             container.innerHTML = '';
             
-            // Exibir termo de pesquisa
             if (currentSearch.trim()) {
                 const searchInfo = document.createElement('div');
                 searchInfo.className = 'search-results-info';
-                searchInfo.textContent = `Resultados para: "${currentSearch}"`;
+                searchInfo.textContent = `🎵 Resultados para: "${currentSearch}"`;
                 container.appendChild(searchInfo);
             }
             
             if (musicList.length === 0) {
                 let message;
                 if (currentSearch.trim()) {
-                    message = `Nenhum resultado encontrado para "${currentSearch}"`;
+                    message = `😞 Nenhum resultado encontrado para "${currentSearch}"`;
                 } else if (currentFilter === 'favoritas') {
-                    message = 'Nenhuma música favoritada';
+                    message = '🌟 Nenhuma música favoritada';
                 } else {
-                    message = 'Nenhuma música encontrada';
+                    message = '📭 Nenhuma música encontrada';
                 }
                 
                 const noResults = document.createElement('div');
@@ -256,11 +410,9 @@
             }
             localStorage.setItem('favorites', JSON.stringify(favorites));
             
-            // Atualizar visualização se estiver na aba de favoritos
             if (currentFilter === 'favoritas') {
                 renderFilteredMusic();
             } else {
-                // Atualizar apenas o card específico
                 const stars = document.querySelectorAll('.favorite-star');
                 stars.forEach(star => {
                     if (star.getAttribute('onclick').includes(musicId)) {
