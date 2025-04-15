@@ -182,6 +182,14 @@
             font-weight: 500;
         }
 
+        .music-lyrics {
+            color: #757575;
+            font-size: 0.95rem;
+            margin: 12px 0;
+            line-height: 1.4;
+            font-style: italic;
+        }
+
         .music-code {
             color: var(--secondary-color);
             font-size: 0.95rem;
@@ -275,7 +283,6 @@
     </div>
 
     <script>
-        // JavaScript mantido igual ao anterior, sem alterações
         let allMusic = [];
         let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
         let currentFilter = 'all';
@@ -377,9 +384,10 @@
                 card.className = 'music-card';
                 card.innerHTML = `
                     <div class="music-info">
-                        <div class="music-title">${music.title}</div>
-                        <div class="music-artist">${music.artist}</div>
-                        <div class="music-code">Código: ${music.code}</div>
+                        <div class="music-artist">🎤 ${music.artist}</div>
+                        <div class="music-title">🎵 ${music.title}</div>
+                        <div class="music-lyrics">📝 ${music.lyrics || 'Letra não disponível'}</div>
+                        <div class="music-code">🔢 Código: ${music.code}</div>
                     </div>
                     <div class="favorite-star" onclick="toggleFavorite('${music.id}')">
                         ${isFavorite ? '★' : '☆'}
