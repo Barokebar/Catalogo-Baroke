@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo Musical - Barokê</title>
     <style>
-        /* Mantenha todo o CSS anterior igual */
         :root {
             --primary-color: #7c4dff;
             --secondary-color: #00e5ff;
@@ -76,22 +75,28 @@
             box-shadow: 0 4px 12px rgba(106, 27, 154, 0.3);
         }
 
+        .btn-category.active {
+            background: linear-gradient(135deg, var(--accent-color), #ff6d00);
+            box-shadow: 0 4px 12px rgba(255, 109, 0, 0.3);
+        }
+
         .search-container {
             margin-bottom: 30px;
-            max-width: 600px; /* Reduzi a largura máxima */
-            margin: 0 auto 30px; /* Centralizei melhor */
-            width: 80%; /* Tornando responsivo */
+            max-width: 600px;
+            margin: 0 auto 30px;
+            width: 80%;
+            display: none; /* Inicialmente escondido */
         }
 
         .search-box {
             width: 100%;
-            padding: 12px 20px; /* Ajustei o padding para ficar mais compacto */
+            padding: 12px 20px;
             border: 2px solid #e0e0e0;
             border-radius: 50px;
             font-size: 16px;
             transition: all 0.3s ease;
             background: white;
-            box-sizing: border-box; /* Garante que padding não aumente a largura */
+            box-sizing: border-box;
         }
 
         .search-box:focus {
@@ -173,6 +178,14 @@
             color: #757575;
         }
 
+        .loading {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+        }
+
         @media (max-width: 768px) {
             .controls {
                 grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -237,23 +250,27 @@
             </button>
         </div>
 
-        <div class="search-container">
+        <div class="search-container" id="searchContainer">
             <input type="text" id="searchInput" class="search-box" 
                    placeholder="🔍 Pesquisar música, artista ou código..." 
                    oninput="handleSearch()">
         </div>
 
         <div class="music-grid" id="musicContainer">
-            <!-- Cards serão gerados pelo JavaScript -->
+            <!-- Mensagem inicial -->
+            <div class="no-results">
+                Selecione uma categoria para carregar as músicas
+            </div>
         </div>
     </div>
 
     <script>
         let allMusic = [];
         let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        let currentFilter = 'all';
-        let currentSearch = localStorage.getItem('lastSearch') || '';
+        let currentFilter = null;
+        let currentSearch = '';
         let searchTimeout;
+        let isDataLoaded = false;
 
         // Função de normalização para ordenação
         const normalizeForSort = (text) => {
@@ -263,20 +280,15 @@
                        .trim();
         };
 
-        window.onload = () => {
-            document.getElementById('searchInput').value = currentSearch;
-            loadMusicData();
-        };
-
-        function handleSearch() {
-            clearTimeout(searchTimeout);
-            currentSearch = document.getElementById('searchInput').value;
-            localStorage.setItem('lastSearch', currentSearch);
-            searchTimeout = setTimeout(renderFilteredMusic, 50);
-        }
-
         async function loadMusicData() {
             try {
+                // Mostrar estado de carregamento
+                document.getElementById('musicContainer').innerHTML = `
+                    <div class="loading">
+                        Carregando músicas...
+                    </div>
+                `;
+                
                 const response = await fetch('https://brk2-1ba1a.firebaseio.com/karaoke.json');
                 const data = await response.json();
                 
@@ -290,25 +302,43 @@
                         lyrics: song.LETRA || ''
                     }))
                 );
+                
+                isDataLoaded = true;
                 renderFilteredMusic();
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
+                document.getElementById('musicContainer').innerHTML = `
+                    <div class="no-results">
+                        😞 Erro ao carregar as músicas. Tente novamente mais tarde.
+                    </div>
+                `;
             }
         }
 
+        function handleSearch() {
+            clearTimeout(searchTimeout);
+            currentSearch = document.getElementById('searchInput').value;
+            searchTimeout = setTimeout(renderFilteredMusic, 50);
+        }
+
         function renderFilteredMusic() {
+            if (!isDataLoaded) return;
+            
             const searchTerm = normalizeForSort(currentSearch);
+            const container = document.getElementById('musicContainer');
             
             let filtered = allMusic.filter(music => {
                 const matchFilter = currentFilter === 'all' || 
                     (currentFilter === 'favoritas' ? favorites.includes(music.id) : 
                     music.category === currentFilter);
                 
-                return matchFilter && (
+                const matchSearch = !searchTerm || (
                     normalizeForSort(music.title).includes(searchTerm) ||
                     normalizeForSort(music.artist).includes(searchTerm) ||
                     music.code.includes(searchTerm)
                 );
+                
+                return matchFilter && matchSearch;
             });
 
             // Ordenação otimizada por cantor
@@ -323,7 +353,17 @@
 
         function renderMusic(list) {
             const container = document.getElementById('musicContainer');
-            container.innerHTML = list.length ? list.map(music => `
+            
+            if (list.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        😞 Nenhuma música encontrada
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = list.map(music => `
                 <div class="music-card">
                     <div class="music-info">
                         <div class="music-title">${music.title}</div>
@@ -335,7 +375,7 @@
                         ${favorites.includes(music.id) ? '★' : '☆'}
                     </div>
                 </div>
-            `).join('') : `<div class="no-results">😞 Nenhum resultado encontrado</div>`;
+            `).join('');
         }
 
         function toggleFavorite(id) {
@@ -343,15 +383,34 @@
                 ? favorites.filter(fId => fId !== id) 
                 : [...favorites, id];
             localStorage.setItem('favorites', JSON.stringify(favorites));
-            renderFilteredMusic();
+            if (currentFilter === 'favoritas') {
+                renderFilteredMusic();
+            }
         }
 
         function filterCategory(category) {
+            // Ativar/desativar botão
+            document.querySelectorAll('.btn-category').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Mostrar barra de pesquisa
+            document.getElementById('searchContainer').style.display = 'block';
+            
+            // Carregar dados se necessário
+            if (!isDataLoaded) {
+                loadMusicData();
+            }
+            
             currentFilter = category;
             currentSearch = '';
-            localStorage.removeItem('lastSearch');
             document.getElementById('searchInput').value = '';
-            renderFilteredMusic();
+            
+            // Se já tiver os dados, renderizar
+            if (isDataLoaded) {
+                renderFilteredMusic();
+            }
         }
     </script>
 </body>
