@@ -209,6 +209,14 @@
         let currentSearch = localStorage.getItem('lastSearch') || '';
         let searchTimeout;
 
+        // Função para normalizar texto (remove acentos e coloca em minúsculas)
+        function normalizeText(text) {
+            return text
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase();
+        }
+
         // Inicialização
         window.onload = () => {
             document.getElementById('searchInput').value = currentSearch;
@@ -249,16 +257,17 @@
         }
 
         function renderFilteredMusic() {
+            const searchTerm = normalizeText(currentSearch);
+            
             let filtered = allMusic.filter(music => {
                 const matchFilter = currentFilter === 'all' || 
                                   (currentFilter === 'favoritas' ? favorites.includes(music.id) : 
                                   music.category === currentFilter);
                 
-                const searchTerm = currentSearch.toLowerCase();
                 return matchFilter && (
-                    music.title.toLowerCase().includes(searchTerm) ||
-                    music.artist.toLowerCase().includes(searchTerm) ||
-                    music.code.includes(searchTerm)
+                    normalizeText(music.title).includes(searchTerm) ||
+                    normalizeText(music.artist).includes(searchTerm) ||
+                    music.code.toString().includes(searchTerm)
                 );
             });
 
