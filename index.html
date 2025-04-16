@@ -97,12 +97,30 @@
             transition: all 0.3s ease;
             background: white;
             box-sizing: border-box;
+            /* Desativa as sugestões do navegador */
+            autocomplete: "off";
+            autocorrect: "off";
+            autocapitalize: "off";
+            spellcheck: false;
         }
 
         .search-box:focus {
             border-color: var(--primary-color);
             outline: none;
             box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.2);
+        }
+
+        /* Esconde as sugestões do Chrome */
+        .search-box::-webkit-search-decoration,
+        .search-box::-webkit-search-cancel-button,
+        .search-box::-webkit-search-results-button,
+        .search-box::-webkit-search-results-decoration {
+            display: none;
+        }
+
+        /* Remove o ícone de histórico no Firefox */
+        .search-box {
+            -moz-appearance: none;
         }
 
         .music-grid {
@@ -254,7 +272,10 @@
             <input type="text" id="searchInput" class="search-box" 
                    placeholder="🔍 Pesquisar música, artista ou código..." 
                    oninput="handleSearch()"
-                   onclick="clearSearch()">
+                   autocomplete="off"
+                   autocorrect="off"
+                   autocapitalize="off"
+                   spellcheck="false">
         </div>
 
         <div class="music-grid" id="musicContainer">
@@ -278,15 +299,6 @@
                        .toLowerCase()
                        .trim();
         };
-
-        // Função para limpar a pesquisa quando clicar na barra
-        function clearSearch() {
-            if (document.getElementById('searchInput').value !== '') {
-                document.getElementById('searchInput').value = '';
-                currentSearch = '';
-                renderFilteredMusic();
-            }
-        }
 
         async function loadMusicData() {
             try {
