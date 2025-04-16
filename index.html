@@ -49,16 +49,14 @@
         }
 
         .controls {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             margin-bottom: 30px;
-            overflow-x: auto;
-            padding-bottom: 10px;
         }
 
         .btn-category {
-            flex: 1;
-            min-width: 220px;
+            width: 100%;
             padding: 16px 24px;
             background: linear-gradient(135deg, var(--primary-color), #8e24aa);
             color: white;
@@ -160,10 +158,13 @@
                 font-size: 1.75rem;
             }
             
+            .controls {
+                grid-template-columns: 1fr;
+            }
+            
             .btn-category {
-                min-width: 180px;
-                padding: 12px 16px;
                 font-size: 14px;
+                padding: 12px 16px;
             }
         }
     </style>
@@ -205,13 +206,20 @@
         let allMusic = [];
         let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
         let currentFilter = 'all';
-        let currentSearch = '';
+        let currentSearch = localStorage.getItem('lastSearch') || '';
         let searchTimeout;
+
+        // Inicialização
+        window.onload = () => {
+            document.getElementById('searchInput').value = currentSearch;
+            loadMusicData();
+        };
 
         // Funções de controle
         function handleSearch() {
             clearTimeout(searchTimeout);
             currentSearch = document.getElementById('searchInput').value;
+            localStorage.setItem('lastSearch', currentSearch);
             searchTimeout = setTimeout(renderFilteredMusic, 50);
         }
 
@@ -301,12 +309,11 @@
 
         function filterCategory(category) {
             currentFilter = category;
+            currentSearch = '';
+            localStorage.removeItem('lastSearch');
             document.getElementById('searchInput').value = '';
             renderFilteredMusic();
         }
-
-        // Inicialização
-        window.onload = loadMusicData;
     </script>
 </body>
 </html>
