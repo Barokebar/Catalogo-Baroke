@@ -85,7 +85,7 @@
             max-width: 600px;
             margin: 0 auto 30px;
             width: 80%;
-            display: none; /* Inicialmente escondido */
+            display: none;
         }
 
         .search-box {
@@ -253,11 +253,11 @@
         <div class="search-container" id="searchContainer">
             <input type="text" id="searchInput" class="search-box" 
                    placeholder="🔍 Pesquisar música, artista ou código..." 
-                   oninput="handleSearch()">
+                   oninput="handleSearch()"
+                   onclick="clearSearch()">
         </div>
 
         <div class="music-grid" id="musicContainer">
-            <!-- Mensagem inicial -->
             <div class="no-results">
                 Selecione uma categoria para carregar as músicas
             </div>
@@ -272,7 +272,6 @@
         let searchTimeout;
         let isDataLoaded = false;
 
-        // Função de normalização para ordenação
         const normalizeForSort = (text) => {
             return text.normalize('NFD')
                        .replace(/[\u0300-\u036f]/g, '')
@@ -280,9 +279,17 @@
                        .trim();
         };
 
+        // Função para limpar a pesquisa quando clicar na barra
+        function clearSearch() {
+            if (document.getElementById('searchInput').value !== '') {
+                document.getElementById('searchInput').value = '';
+                currentSearch = '';
+                renderFilteredMusic();
+            }
+        }
+
         async function loadMusicData() {
             try {
-                // Mostrar estado de carregamento
                 document.getElementById('musicContainer').innerHTML = `
                     <div class="loading">
                         Carregando músicas...
@@ -341,7 +348,6 @@
                 return matchFilter && matchSearch;
             });
 
-            // Ordenação otimizada por cantor
             filtered.sort((a, b) => {
                 const artistA = normalizeForSort(a.artist);
                 const artistB = normalizeForSort(b.artist);
@@ -389,6 +395,10 @@
         }
 
         function filterCategory(category) {
+            // Resetar completamente a pesquisa
+            currentSearch = '';
+            document.getElementById('searchInput').value = '';
+            
             // Ativar/desativar botão
             document.querySelectorAll('.btn-category').forEach(btn => {
                 btn.classList.remove('active');
@@ -404,8 +414,6 @@
             }
             
             currentFilter = category;
-            currentSearch = '';
-            document.getElementById('searchInput').value = '';
             
             // Se já tiver os dados, renderizar
             if (isDataLoaded) {
