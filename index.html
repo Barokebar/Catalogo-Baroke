@@ -78,18 +78,26 @@
 
         .search-container {
             margin-bottom: 30px;
-            max-width: 800px;
-            margin: 0 auto;
+            max-width: 600px; /* Reduzi a largura máxima */
+            margin: 0 auto 30px; /* Centralizei melhor */
+            width: 80%; /* Tornando responsivo */
         }
 
         .search-box {
             width: 100%;
-            padding: 14px 24px;
+            padding: 12px 20px; /* Ajustei o padding para ficar mais compacto */
             border: 2px solid #e0e0e0;
             border-radius: 50px;
             font-size: 16px;
             transition: all 0.3s ease;
             background: white;
+            box-sizing: border-box; /* Garante que padding não aumente a largura */
+        }
+
+        .search-box:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.2);
         }
 
         .music-grid {
@@ -109,6 +117,7 @@
 
         .music-card:hover {
             transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
         }
 
         .music-title {
@@ -149,6 +158,19 @@
             cursor: pointer;
             font-size: 22px;
             color: #ffd740;
+            transition: all 0.2s ease;
+        }
+
+        .favorite-star:hover {
+            transform: scale(1.2);
+        }
+
+        .no-results {
+            text-align: center;
+            grid-column: 1 / -1;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #757575;
         }
 
         @media (max-width: 768px) {
@@ -169,7 +191,11 @@
             }
             
             .search-box {
-                padding: 12px 20px;
+                padding: 10px 16px;
+            }
+
+            .search-container {
+                width: 90%;
             }
         }
 
@@ -182,6 +208,10 @@
             .btn-category {
                 font-size: 12px;
                 padding: 8px 10px;
+            }
+
+            .search-container {
+                width: 100%;
             }
         }
     </style>
