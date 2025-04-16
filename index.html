@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo Musical - Barokê</title>
     <style>
+        /* Mantenha todo o CSS anterior igual */
         :root {
             --primary-color: #7c4dff;
             --secondary-color: #00e5ff;
@@ -224,9 +225,13 @@
         let currentSearch = localStorage.getItem('lastSearch') || '';
         let searchTimeout;
 
-        function normalizeText(text) {
-            return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
-        }
+        // Função de normalização para ordenação
+        const normalizeForSort = (text) => {
+            return text.normalize('NFD')
+                       .replace(/[\u0300-\u036f]/g, '')
+                       .toLowerCase()
+                       .trim();
+        };
 
         window.onload = () => {
             document.getElementById('searchInput').value = currentSearch;
@@ -262,18 +267,25 @@
         }
 
         function renderFilteredMusic() {
-            const searchTerm = normalizeText(currentSearch);
+            const searchTerm = normalizeForSort(currentSearch);
             
-            const filtered = allMusic.filter(music => {
+            let filtered = allMusic.filter(music => {
                 const matchFilter = currentFilter === 'all' || 
                     (currentFilter === 'favoritas' ? favorites.includes(music.id) : 
                     music.category === currentFilter);
                 
                 return matchFilter && (
-                    normalizeText(music.title).includes(searchTerm) ||
-                    normalizeText(music.artist).includes(searchTerm) ||
+                    normalizeForSort(music.title).includes(searchTerm) ||
+                    normalizeForSort(music.artist).includes(searchTerm) ||
                     music.code.includes(searchTerm)
                 );
+            });
+
+            // Ordenação otimizada por cantor
+            filtered.sort((a, b) => {
+                const artistA = normalizeForSort(a.artist);
+                const artistB = normalizeForSort(b.artist);
+                return artistA.localeCompare(artistB, 'pt-BR', { sensitivity: 'base' });
             });
 
             renderMusic(filtered);
