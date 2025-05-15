@@ -165,7 +165,7 @@
         }
 
         .music-code {
-            color: var(--secondary-color);
+            color: #333333; /* Cor alterada para melhor visibilidade */
             font-weight: 700;
             background: rgba(0, 229, 255, 0.1);
             padding: 6px 12px;
@@ -270,7 +270,7 @@
 
         <div class="search-container" id="searchContainer">
             <input type="text" id="searchInput" class="search-box" 
-                   placeholder="🔍 Pesquisar música, artista ou código..." 
+                   placeholder="🔍 Pesquisar por título (início/contém), artista ou código..." 
                    oninput="handleSearch()"
                    autocomplete="off"
                    autocorrect="off"
@@ -283,6 +283,9 @@
                 Selecione uma categoria para carregar as músicas
             </div>
         </div>
+        <div class="load-more-container" id="loadMoreContainer" style="text-align: center; margin-top: 20px; display: none;">
+            <button id="loadMoreBtn" class="btn-category" style="background: var(--accent-color); color: white;">Carregar Mais Músicas</button>
+        </div>
     </div>
 
     <script>
@@ -293,6 +296,11 @@
         let searchTimeout;
         let isDataLoaded = false;
 
+        // New variables for pagination
+        let displayedItemsCount = 0;
+        const ITEMS_PER_PAGE = 12; 
+        let currentFilteredSortedList = []; 
+
         const normalizeForSort = (text) => {
             return text.normalize('NFD')
                        .replace(/[\u0300-\u036f]/g, '')
@@ -301,12 +309,11 @@
         };
 
         async function loadMusicData() {
+            const musicContainer = document.getElementById('musicContainer');
+            const loadMoreContainer = document.getElementById('loadMoreContainer');
             try {
-                document.getElementById('musicContainer').innerHTML = `
-                    <div class="loading">
-                        Carregando músicas...
-                    </div>
-                `;
+                musicContainer.innerHTML = `<div class="loading">Carregando músicas...</div>`;
+                if(loadMoreContainer) loadMoreContainer.style.display = 'none';
                 
                 const response = await fetch('https://brk2-1ba1a.firebaseio.com/karaoke.json');
                 const data = await response.json();
@@ -323,28 +330,40 @@
                 );
                 
                 isDataLoaded = true;
-                renderFilteredMusic();
+                if (currentFilter) { 
+                    renderFilteredMusic();
+                } else {
+                    if(loadMoreContainer) loadMoreContainer.style.display = 'none';
+                }
             } catch (error) {
                 console.error('Erro ao carregar dados:', error);
-                document.getElementById('musicContainer').innerHTML = `
-                    <div class="no-results">
-                        😞 Erro ao carregar as músicas. Tente novamente mais tarde.
-                    </div>
-                `;
+                musicContainer.innerHTML = `<div class="no-results">😞 Erro ao carregar as músicas. Tente novamente mais tarde.</div>`;
+                if(loadMoreContainer) loadMoreContainer.style.display = 'none';
             }
         }
 
         function handleSearch() {
             clearTimeout(searchTimeout);
             currentSearch = document.getElementById('searchInput').value;
-            searchTimeout = setTimeout(renderFilteredMusic, 50);
+            searchTimeout = setTimeout(() => {
+                renderFilteredMusic(); 
+            }, 50);
         }
 
         function renderFilteredMusic() {
-            if (!isDataLoaded) return;
+            if (!isDataLoaded) {
+                return;
+            }
+            if (!currentFilter) {
+                document.getElementById('musicContainer').innerHTML = `<div class="no-results">Selecione uma categoria para começar.</div>`;
+                const loadMoreContainer = document.getElementById('loadMoreContainer');
+                if(loadMoreContainer) loadMoreContainer.style.display = 'none';
+                return;
+            }
             
             const searchTerm = normalizeForSort(currentSearch);
-            const container = document.getElementById('musicContainer');
+            const musicContainer = document.getElementById('musicContainer');
+            const loadMoreContainer = document.getElementById('loadMoreContainer');
             
             let filtered = allMusic.filter(music => {
                 const matchFilter = currentFilter === 'all' || 
@@ -352,7 +371,7 @@
                     music.category === currentFilter);
                 
                 const matchSearch = !searchTerm || (
-                    normalizeForSort(music.title).includes(searchTerm) ||
+                    (normalizeForSort(music.title).startsWith(searchTerm) || normalizeForSort(music.title).includes(searchTerm)) ||
                     normalizeForSort(music.artist).includes(searchTerm) ||
                     music.code.includes(searchTerm)
                 );
@@ -366,22 +385,25 @@
                 return artistA.localeCompare(artistB, 'pt-BR', { sensitivity: 'base' });
             });
 
-            renderMusic(filtered);
+            currentFilteredSortedList = filtered;
+            displayedItemsCount = 0;
+            musicContainer.innerHTML = ''; 
+
+            if (currentFilteredSortedList.length === 0) {
+                musicContainer.innerHTML = `<div class="no-results">😞 Nenhuma música encontrada.</div>`;
+                if(loadMoreContainer) loadMoreContainer.style.display = 'none';
+            } else {
+                appendMusicItems(); 
+            }
         }
 
-        function renderMusic(list) {
-            const container = document.getElementById('musicContainer');
+        function appendMusicItems() {
+            const musicContainer = document.getElementById('musicContainer');
+            const loadMoreContainer = document.getElementById('loadMoreContainer');
+
+            const itemsToDisplay = currentFilteredSortedList.slice(displayedItemsCount, displayedItemsCount + ITEMS_PER_PAGE);
             
-            if (list.length === 0) {
-                container.innerHTML = `
-                    <div class="no-results">
-                        😞 Nenhuma música encontrada
-                    </div>
-                `;
-                return;
-            }
-            
-            container.innerHTML = list.map(music => `
+            const musicHTML = itemsToDisplay.map(music => `
                 <div class="music-card">
                     <div class="music-info">
                         <div class="music-title">${music.title}</div>
@@ -394,44 +416,75 @@
                     </div>
                 </div>
             `).join('');
+
+            musicContainer.insertAdjacentHTML('beforeend', musicHTML);
+            displayedItemsCount += itemsToDisplay.length;
+
+            if (displayedItemsCount < currentFilteredSortedList.length) {
+                if(loadMoreContainer) loadMoreContainer.style.display = 'block';
+            } else {
+                if(loadMoreContainer) loadMoreContainer.style.display = 'none';
+            }
         }
 
         function toggleFavorite(id) {
-            favorites = favorites.includes(id) 
-                ? favorites.filter(fId => fId !== id) 
-                : [...favorites, id];
+            const initialFavoriteStatus = favorites.includes(id);
+            if (initialFavoriteStatus) {
+                favorites = favorites.filter(fId => fId !== id);
+            } else {
+                favorites.push(id);
+            }
             localStorage.setItem('favorites', JSON.stringify(favorites));
+            
+            const allStarsForId = document.querySelectorAll(`.favorite-star[onclick="toggleFavorite('${id}')"]`);
+            allStarsForId.forEach(starElement => {
+                 starElement.innerHTML = favorites.includes(id) ? '★' : '☆';
+            });
+
             if (currentFilter === 'favoritas') {
                 renderFilteredMusic();
             }
         }
 
         function filterCategory(category) {
-            // Resetar completamente a pesquisa
-            currentSearch = '';
-            document.getElementById('searchInput').value = '';
+            currentSearch = ''; 
+            const searchInput = document.getElementById('searchInput');
+            if(searchInput) searchInput.value = '';
             
-            // Ativar/desativar botão
-            document.querySelectorAll('.btn-category').forEach(btn => {
-                btn.classList.remove('active');
+            document.querySelectorAll('.btn-category.active').forEach(btn => btn.classList.remove('active'));
+            
+            const categoryButtons = document.querySelectorAll('.btn-category');
+            let clickedButton = null;
+            categoryButtons.forEach(btn => {
+                if (btn.onclick && btn.onclick.toString().includes(`filterCategory('${category}')`)) {
+                    clickedButton = btn;
+                }
             });
-            event.target.classList.add('active');
-            
-            // Mostrar barra de pesquisa
-            document.getElementById('searchContainer').style.display = 'block';
-            
-            // Carregar dados se necessário
-            if (!isDataLoaded) {
-                loadMusicData();
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+            } else if (event && event.target && event.target.classList.contains('btn-category')) {
+                 event.target.classList.add('active');
             }
+
+            const searchContainer = document.getElementById('searchContainer');
+            if(searchContainer) searchContainer.style.display = 'block';
             
-            currentFilter = category;
-            
-            // Se já tiver os dados, renderizar
-            if (isDataLoaded) {
+            currentFilter = category; 
+
+            if (!isDataLoaded) {
+                loadMusicData(); 
+            } else {
                 renderFilteredMusic();
             }
         }
+
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', appendMusicItems);
+        }
+
+        const initialLoadMoreContainer = document.getElementById('loadMoreContainer');
+        if(initialLoadMoreContainer) initialLoadMoreContainer.style.display = 'none';
     </script>
 </body>
 </html>
