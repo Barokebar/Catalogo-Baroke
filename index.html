@@ -1,490 +1,381 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo Musical - Barokê</title>
-    <style>
-        :root {
-            --primary-color: #7c4dff;
-            --secondary-color: #00e5ff;
-            --accent-color: #ff6d00;
-            --background-color: #f8f9fa;
-            --font-heading: 'Poppins', system-ui;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo Musical - Barokê</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+    :root {
+      --primary-color: #7c4dff;
+      --secondary-color: #00e5ff;
+      --accent-color: #ff6d00;
+      --background-color: #f8f9fa;
+      --font-heading: 'Poppins', system-ui;
+    }
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: var(--background-color);
-            margin: 0;
-            padding: 20px;
-            color: #424242;
-            line-height: 1.6;
-        }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--background-color);
+      margin: 0;
+      padding: 20px;
+      color: #424242;
+      line-height: 1.6;
+    }
 
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-        }
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
 
-        .header {
-            background: linear-gradient(135deg, #6a1b9a, #8e24aa);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-            border-radius: 20px;
-            margin-bottom: 30px;
-        }
+    .header {
+      background: linear-gradient(135deg, #6a1b9a, #8e24aa);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+      border-radius: 20px;
+      margin-bottom: 30px;
+    }
 
-        .header h2 {
-            font-family: var(--font-heading);
-            font-weight: 700;
-            font-size: 2rem;
-            margin: 0;
-        }
+    .header h2 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 2rem;
+      margin: 0;
+    }
 
-        .controls {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-bottom: 30px;
-        }
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 30px;
+    }
 
-        .btn-category {
-            width: 100%;
-            padding: 12px 16px;
-            background: linear-gradient(135deg, var(--primary-color), #8e24aa);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            font-family: var(--font-heading);
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            font-size: 14px;
-        }
+    .btn-category {
+      width: 100%;
+      padding: 12px 16px;
+      background: linear-gradient(135deg, var(--primary-color), #8e24aa);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      font-family: var(--font-heading);
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 14px;
+    }
 
-        .btn-category:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(106, 27, 154, 0.3);
-        }
+    .btn-category:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(106, 27, 154, 0.3);
+    }
 
-        .btn-category.active {
-            background: linear-gradient(135deg, var(--accent-color), #ff6d00);
-            box-shadow: 0 4px 12px rgba(255, 109, 0, 0.3);
-        }
+    .btn-category.active {
+      background: linear-gradient(135deg, var(--accent-color), #ff6d00);
+      box-shadow: 0 4px 12px rgba(255, 109, 0, 0.3);
+    }
 
-        .search-container {
-            margin-bottom: 30px;
-            max-width: 600px;
-            margin: 0 auto 30px;
-            width: 80%;
-            display: none;
-        }
+    .search-container {
+      margin-bottom: 30px;
+      max-width: 600px;
+      margin: 0 auto 30px;
+      width: 80%;
+      display: none;
+    }
 
-        .search-box {
-            width: 100%;
-            padding: 12px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 50px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: white;
-            box-sizing: border-box;
-            /* Desativa as sugestões do navegador */
-            autocomplete: "off";
-            autocorrect: "off";
-            autocapitalize: "off";
-            spellcheck: false;
-        }
+    .search-box {
+      width: 100%;
+      padding: 12px 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 50px;
+      font-size: 16px;
+      background: white;
+      box-sizing: border-box;
+    }
 
-        .search-box:focus {
-            border-color: var(--primary-color);
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.2);
-        }
+    .search-box:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.2);
+    }
 
-        /* Esconde as sugestões do Chrome */
-        .search-box::-webkit-search-decoration,
-        .search-box::-webkit-search-cancel-button,
-        .search-box::-webkit-search-results-button,
-        .search-box::-webkit-search-results-decoration {
-            display: none;
-        }
+    .music-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
 
-        /* Remove o ícone de histórico no Firefox */
-        .search-box {
-            -moz-appearance: none;
-        }
+    .music-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      position: relative;
+    }
 
-        .music-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
+    .music-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    }
 
-        .music-card {
-            background: white;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            position: relative;
-        }
+    .music-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
 
-        .music-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-        }
+    .music-artist {
+      color: #616161;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
 
-        .music-title {
-            font-family: var(--font-heading);
-            font-weight: 700;
-            color: var(--primary-color);
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-        }
+    .music-lyrics {
+      color: #757575;
+      font-size: 0.85rem;
+      margin: 10px 0;
+      line-height: 1.4;
+    }
 
-        .music-artist {
-            color: #616161;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-        }
+    .music-code {
+      color: #333333;
+      font-weight: 700;
+      background: rgba(0, 229, 255, 0.1);
+      padding: 6px 12px;
+      border-radius: 6px;
+      display: inline-block;
+      font-size: 0.9rem;
+    }
 
-        .music-lyrics {
-            color: #757575;
-            font-size: 0.85rem;
-            margin: 10px 0;
-            line-height: 1.4;
-        }
+    .favorite-star {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      cursor: pointer;
+      font-size: 22px;
+      color: #ffd740;
+      transition: all 0.2s ease;
+    }
 
-        .music-code {
-            color: #333333; /* Cor alterada para melhor visibilidade */
-            font-weight: 700;
-            background: rgba(0, 229, 255, 0.1);
-            padding: 6px 12px;
-            border-radius: 6px;
-            display: inline-block;
-            font-size: 0.9rem;
-        }
+    .favorite-star:hover {
+      transform: scale(1.2);
+    }
 
-        .favorite-star {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            cursor: pointer;
-            font-size: 22px;
-            color: #ffd740;
-            transition: all 0.2s ease;
-        }
+    .no-results, .loading {
+      text-align: center;
+      grid-column: 1 / -1;
+      padding: 40px;
+      font-size: 1.2rem;
+      color: #757575;
+    }
 
-        .favorite-star:hover {
-            transform: scale(1.2);
-        }
+    .loading {
+      color: var(--primary-color);
+    }
 
-        .no-results {
-            text-align: center;
-            grid-column: 1 / -1;
-            padding: 40px;
-            font-size: 1.2rem;
-            color: #757575;
-        }
+    @media (max-width: 768px) {
+      .controls {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      }
+    }
 
-        .loading {
-            text-align: center;
-            grid-column: 1 / -1;
-            padding: 40px;
-            font-size: 1.2rem;
-            color: var(--primary-color);
-        }
-
-        @media (max-width: 768px) {
-            .controls {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                gap: 8px;
-            }
-            
-            .btn-category {
-                font-size: 13px;
-                padding: 10px 12px;
-                white-space: normal;
-                line-height: 1.3;
-            }
-            
-            .header h2 {
-                font-size: 1.5rem;
-            }
-            
-            .search-box {
-                padding: 10px 16px;
-            }
-
-            .search-container {
-                width: 90%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .controls {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 8px;
-            }
-            
-            .btn-category {
-                font-size: 12px;
-                padding: 8px 10px;
-            }
-
-            .search-container {
-                width: 100%;
-            }
-        }
-    </style>
+    @media (max-width: 480px) {
+      .controls {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h2>🎶 Catálogo Barokê</h2>
-        </div>
-
-        <div class="controls">
-            <button class="btn-category" onclick="filterCategory('nacionais')">
-                🇧🇷 Nacionais
-            </button>
-            <button class="btn-category" onclick="filterCategory('internacionais')">
-                🌍 Internacionais
-            </button>
-            <button class="btn-category" onclick="filterCategory('novidades')">
-                🎉 Novidades
-            </button>
-            <button class="btn-category" onclick="filterCategory('favoritas')">
-                ⭐ Favoritas
-            </button>
-        </div>
-
-        <div class="search-container" id="searchContainer">
-            <input type="text" id="searchInput" class="search-box" 
-                   placeholder="🔍 Pesquisar por título (início/contém), artista ou código..." 
-                   oninput="handleSearch()"
-                   autocomplete="off"
-                   autocorrect="off"
-                   autocapitalize="off"
-                   spellcheck="false">
-        </div>
-
-        <div class="music-grid" id="musicContainer">
-            <div class="no-results">
-                Selecione uma categoria para carregar as músicas
-            </div>
-        </div>
-        <div class="load-more-container" id="loadMoreContainer" style="text-align: center; margin-top: 20px; display: none;">
-            <button id="loadMoreBtn" class="btn-category" style="background: var(--accent-color); color: white;">Carregar Mais Músicas</button>
-        </div>
+  <div class="container">
+    <div class="header">
+      <h2>🎶 Catálogo Barokê</h2>
     </div>
 
-    <script>
-        let allMusic = [];
-        let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-        let currentFilter = null;
-        let currentSearch = '';
-        let searchTimeout;
-        let isDataLoaded = false;
+    <div class="controls">
+      <button class="btn-category" onclick="filterCategory('nacionais')">🇧🇷 Nacionais</button>
+      <button class="btn-category" onclick="filterCategory('internacionais')">🌍 Internacionais</button>
+      <button class="btn-category" onclick="filterCategory('novidades')">🎉 Novidades</button>
+      <button class="btn-category" onclick="filterCategory('favoritas')">⭐ Favoritas</button>
+    </div>
 
-        // New variables for pagination
-        let displayedItemsCount = 0;
-        const ITEMS_PER_PAGE = 12; 
-        let currentFilteredSortedList = []; 
+    <div class="search-container" id="searchContainer">
+      <input type="text" id="searchInput" class="search-box"
+        placeholder="🔍 Pesquisar por título, artista ou código..."
+        oninput="handleSearch()"
+        autocomplete="off">
+    </div>
 
-        const normalizeForSort = (text) => {
-            return text.normalize('NFD')
-                       .replace(/[\u0300-\u036f]/g, '')
-                       .toLowerCase()
-                       .trim();
-        };
+    <div class="music-grid" id="musicContainer">
+      <div class="no-results">Selecione uma categoria para carregar as músicas</div>
+    </div>
 
-        async function loadMusicData() {
-            const musicContainer = document.getElementById('musicContainer');
-            const loadMoreContainer = document.getElementById('loadMoreContainer');
-            try {
-                musicContainer.innerHTML = `<div class="loading">Carregando músicas...</div>`;
-                if(loadMoreContainer) loadMoreContainer.style.display = 'none';
-                
-                const response = await fetch('https://brk2-1ba1a.firebaseio.com/karaoke.json');
-                const data = await response.json();
-                
-                allMusic = Object.entries(data).flatMap(([category, songs]) => 
-                    Object.entries(songs).map(([code, song]) => ({
-                        id: `${category}-${code}`,
-                        code,
-                        category,
-                        artist: (song.CANTOR || '').toString().trim(),
-                        title: (song.MUSICA || '').toString().trim(),
-                        lyrics: song.LETRA || ''
-                    }))
-                );
-                
-                isDataLoaded = true;
-                if (currentFilter) { 
-                    renderFilteredMusic();
-                } else {
-                    if(loadMoreContainer) loadMoreContainer.style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Erro ao carregar dados:', error);
-                musicContainer.innerHTML = `<div class="no-results">😞 Erro ao carregar as músicas. Tente novamente mais tarde.</div>`;
-                if(loadMoreContainer) loadMoreContainer.style.display = 'none';
-            }
+    <div id="loadMoreContainer" style="text-align: center; margin-top: 20px; display: none;">
+      <button id="loadMoreBtn" class="btn-category" style="background: var(--accent-color); color: white;">
+        Carregar Mais Músicas
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let allMusic = [];
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    let currentFilter = null;
+    let currentSearch = '';
+    let searchTimeout;
+    let isDataLoaded = false;
+
+    let displayedItemsCount = 0;
+    const ITEMS_PER_PAGE = 12;
+    let currentFilteredSortedList = [];
+
+    const normalizeForSort = (text) => {
+      return text
+        .normalize('NFD') // remove acentos
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[.,:;]/g, '') // remove vírgulas e pontuações
+        .toLowerCase()
+        .trim();
+    };
+
+    async function loadMusicData() {
+      const musicContainer = document.getElementById('musicContainer');
+      const loadMoreContainer = document.getElementById('loadMoreContainer');
+      try {
+        musicContainer.innerHTML = `<div class="loading">Carregando músicas...</div>`;
+        loadMoreContainer.style.display = 'none';
+
+        const response = await fetch('https://brk2-1ba1a.firebaseio.com/karaoke.json');
+        const data = await response.json();
+
+        allMusic = Object.entries(data).flatMap(([category, songs]) =>
+          Object.entries(songs).map(([code, song]) => ({
+            id: `${category}-${code}`,
+            code,
+            category,
+            artist: (song.CANTOR || '').toString().trim(),
+            title: (song.MUSICA || '').toString().trim(),
+            lyrics: song.LETRA || ''
+          }))
+        );
+
+        isDataLoaded = true;
+        if (currentFilter) {
+          renderFilteredMusic();
         }
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        musicContainer.innerHTML = `<div class="no-results">😞 Erro ao carregar as músicas. Tente novamente mais tarde.</div>`;
+      }
+    }
 
-        function handleSearch() {
-            clearTimeout(searchTimeout);
-            currentSearch = document.getElementById('searchInput').value;
-            searchTimeout = setTimeout(() => {
-                renderFilteredMusic(); 
-            }, 50);
-        }
+    function handleSearch() {
+      clearTimeout(searchTimeout);
+      currentSearch = document.getElementById('searchInput').value;
+      searchTimeout = setTimeout(() => {
+        renderFilteredMusic();
+      }, 100);
+    }
 
-        function renderFilteredMusic() {
-            if (!isDataLoaded) {
-                return;
-            }
-            if (!currentFilter) {
-                document.getElementById('musicContainer').innerHTML = `<div class="no-results">Selecione uma categoria para começar.</div>`;
-                const loadMoreContainer = document.getElementById('loadMoreContainer');
-                if(loadMoreContainer) loadMoreContainer.style.display = 'none';
-                return;
-            }
-            
-            const searchTerm = normalizeForSort(currentSearch);
-            const musicContainer = document.getElementById('musicContainer');
-            const loadMoreContainer = document.getElementById('loadMoreContainer');
-            
-            let filtered = allMusic.filter(music => {
-                const matchFilter = currentFilter === 'all' || 
-                    (currentFilter === 'favoritas' ? favorites.includes(music.id) : 
-                    music.category === currentFilter);
-                
-                const matchSearch = !searchTerm || (
-                    (normalizeForSort(music.title).startsWith(searchTerm) || normalizeForSort(music.title).includes(searchTerm)) ||
-                    normalizeForSort(music.artist).includes(searchTerm) ||
-                    music.code.includes(searchTerm)
-                );
-                
-                return matchFilter && matchSearch;
-            });
+    function renderFilteredMusic() {
+      if (!isDataLoaded) return;
 
-            filtered.sort((a, b) => {
-                const artistA = normalizeForSort(a.artist);
-                const artistB = normalizeForSort(b.artist);
-                return artistA.localeCompare(artistB, 'pt-BR', { sensitivity: 'base' });
-            });
+      const searchTerm = normalizeForSort(currentSearch);
+      const musicContainer = document.getElementById('musicContainer');
+      const loadMoreContainer = document.getElementById('loadMoreContainer');
 
-            currentFilteredSortedList = filtered;
-            displayedItemsCount = 0;
-            musicContainer.innerHTML = ''; 
+      let filtered = allMusic.filter(music => {
+        const matchFilter = currentFilter === 'favoritas'
+          ? favorites.includes(music.id)
+          : music.category === currentFilter;
 
-            if (currentFilteredSortedList.length === 0) {
-                musicContainer.innerHTML = `<div class="no-results">😞 Nenhuma música encontrada.</div>`;
-                if(loadMoreContainer) loadMoreContainer.style.display = 'none';
-            } else {
-                appendMusicItems(); 
-            }
-        }
+        const searchableTitle = normalizeForSort(music.title);
+        const searchableArtist = normalizeForSort(music.artist);
+        const searchableCode = normalizeForSort(music.code);
 
-        function appendMusicItems() {
-            const musicContainer = document.getElementById('musicContainer');
-            const loadMoreContainer = document.getElementById('loadMoreContainer');
+        const matchSearch = !searchTerm || (
+          searchableTitle.includes(searchTerm) ||
+          searchableArtist.includes(searchTerm) ||
+          searchableCode.includes(searchTerm)
+        );
 
-            const itemsToDisplay = currentFilteredSortedList.slice(displayedItemsCount, displayedItemsCount + ITEMS_PER_PAGE);
-            
-            const musicHTML = itemsToDisplay.map(music => `
-                <div class="music-card">
-                    <div class="music-info">
-                        <div class="music-title">${music.title}</div>
-                        <div class="music-artist">${music.artist}</div>
-                        <div class="music-lyrics">${music.lyrics || 'Letra não disponível'}</div>
-                        <div class="music-code">Código: ${music.code}</div>
-                    </div>
-                    <div class="favorite-star" onclick="toggleFavorite('${music.id}')">
-                        ${favorites.includes(music.id) ? '★' : '☆'}
-                    </div>
-                </div>
-            `).join('');
+        return matchFilter && matchSearch;
+      });
 
-            musicContainer.insertAdjacentHTML('beforeend', musicHTML);
-            displayedItemsCount += itemsToDisplay.length;
+      filtered.sort((a, b) => normalizeForSort(a.artist).localeCompare(normalizeForSort(b.artist), 'pt-BR'));
 
-            if (displayedItemsCount < currentFilteredSortedList.length) {
-                if(loadMoreContainer) loadMoreContainer.style.display = 'block';
-            } else {
-                if(loadMoreContainer) loadMoreContainer.style.display = 'none';
-            }
-        }
+      currentFilteredSortedList = filtered;
+      displayedItemsCount = 0;
+      musicContainer.innerHTML = '';
 
-        function toggleFavorite(id) {
-            const initialFavoriteStatus = favorites.includes(id);
-            if (initialFavoriteStatus) {
-                favorites = favorites.filter(fId => fId !== id);
-            } else {
-                favorites.push(id);
-            }
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-            
-            const allStarsForId = document.querySelectorAll(`.favorite-star[onclick="toggleFavorite('${id}')"]`);
-            allStarsForId.forEach(starElement => {
-                 starElement.innerHTML = favorites.includes(id) ? '★' : '☆';
-            });
+      if (filtered.length === 0) {
+        musicContainer.innerHTML = `<div class="no-results">😞 Nenhuma música encontrada.</div>`;
+        loadMoreContainer.style.display = 'none';
+      } else {
+        appendMusicItems();
+      }
+    }
 
-            if (currentFilter === 'favoritas') {
-                renderFilteredMusic();
-            }
-        }
+    function appendMusicItems() {
+      const musicContainer = document.getElementById('musicContainer');
+      const loadMoreContainer = document.getElementById('loadMoreContainer');
 
-        function filterCategory(category) {
-            currentSearch = ''; 
-            const searchInput = document.getElementById('searchInput');
-            if(searchInput) searchInput.value = '';
-            
-            document.querySelectorAll('.btn-category.active').forEach(btn => btn.classList.remove('active'));
-            
-            const categoryButtons = document.querySelectorAll('.btn-category');
-            let clickedButton = null;
-            categoryButtons.forEach(btn => {
-                if (btn.onclick && btn.onclick.toString().includes(`filterCategory('${category}')`)) {
-                    clickedButton = btn;
-                }
-            });
-            if (clickedButton) {
-                clickedButton.classList.add('active');
-            } else if (event && event.target && event.target.classList.contains('btn-category')) {
-                 event.target.classList.add('active');
-            }
+      const itemsToDisplay = currentFilteredSortedList.slice(displayedItemsCount, displayedItemsCount + ITEMS_PER_PAGE);
 
-            const searchContainer = document.getElementById('searchContainer');
-            if(searchContainer) searchContainer.style.display = 'block';
-            
-            currentFilter = category; 
+      const musicHTML = itemsToDisplay.map(music => `
+        <div class="music-card">
+          <div class="music-info">
+            <div class="music-title">${music.title}</div>
+            <div class="music-artist">${music.artist}</div>
+            <div class="music-lyrics">${music.lyrics || 'Letra não disponível'}</div>
+            <div class="music-code">Código: ${music.code}</div>
+          </div>
+          <div class="favorite-star" onclick="toggleFavorite('${music.id}')">
+            ${favorites.includes(music.id) ? '★' : '☆'}
+          </div>
+        </div>
+      `).join('');
 
-            if (!isDataLoaded) {
-                loadMusicData(); 
-            } else {
-                renderFilteredMusic();
-            }
-        }
+      musicContainer.insertAdjacentHTML('beforeend', musicHTML);
+      displayedItemsCount += itemsToDisplay.length;
 
-        const loadMoreBtn = document.getElementById('loadMoreBtn');
-        if (loadMoreBtn) {
-            loadMoreBtn.addEventListener('click', appendMusicItems);
-        }
+      loadMoreContainer.style.display = displayedItemsCount < currentFilteredSortedList.length ? 'block' : 'none';
+    }
 
-        const initialLoadMoreContainer = document.getElementById('loadMoreContainer');
-        if(initialLoadMoreContainer) initialLoadMoreContainer.style.display = 'none';
-    </script>
+    function toggleFavorite(id) {
+      const isFav = favorites.includes(id);
+      favorites = isFav ? favorites.filter(f => f !== id) : [...favorites, id];
+      localStorage.setItem('favorites', JSON.stringify(favorites));
+
+      renderFilteredMusic();
+    }
+
+    function filterCategory(category) {
+      currentSearch = '';
+      document.getElementById('searchInput').value = '';
+
+      document.querySelectorAll('.btn-category').forEach(btn => btn.classList.remove('active'));
+      event?.target.classList.add('active');
+
+      document.getElementById('searchContainer').style.display = 'block';
+      currentFilter = category;
+
+      if (!isDataLoaded) {
+        loadMusicData();
+      } else {
+        renderFilteredMusic();
+      }
+    }
+
+    document.getElementById('loadMoreBtn').addEventListener('click', appendMusicItems);
+  </script>
 </body>
 </html>
