@@ -133,17 +133,19 @@
     }
 
     .music-artist {
-      color: #616161;
+      color: var(--secondary-color); /* Cor destacada */
+      font-weight: 600;              /* Negrito */
       font-size: 0.9rem;
       margin-bottom: 10px;
     }
 
-    .music-lyrics {
-      color: #757575;
-      font-size: 0.85rem;
-      margin: 10px 0;
-      line-height: 1.4;
-    }
+    .music-artist {
+      color: red; /* Agora o nome do artista ficará vermelho */
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+   }
+
 
     .music-code {
       color: #333333;
@@ -190,6 +192,14 @@
     @media (max-width: 480px) {
       .controls {
         grid-template-columns: repeat(2, 1fr);
+      }
+
+      .header {
+        padding: 1rem;
+      }
+
+      .header h2 {
+        font-size: 1.5rem;
       }
     }
   </style>
@@ -239,9 +249,9 @@
 
     const normalizeForSort = (text) => {
       return text
-        .normalize('NFD') // remove acentos
+        .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[.,:;]/g, '') // remove vírgulas e pontuações
+        .replace(/[.,:;]/g, '')
         .toLowerCase()
         .trim();
     };
