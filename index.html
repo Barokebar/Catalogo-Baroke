@@ -133,19 +133,11 @@
     }
 
     .music-artist {
-      color: var(--secondary-color); /* Cor destacada */
-      font-weight: 600;              /* Negrito */
-      font-size: 0.9rem;
-      margin-bottom: 10px;
-    }
-
-    .music-artist {
-      color: red; /* Agora o nome do artista ficará vermelho */
+      color: red;
       font-weight: 600;
       font-size: 0.9rem;
       margin-bottom: 10px;
-   }
-
+    }
 
     .music-code {
       color: #333333;
@@ -219,7 +211,7 @@
 
     <div class="search-container" id="searchContainer">
       <input type="text" id="searchInput" class="search-box"
-        placeholder="🔍 Pesquisar por título, artista ou código..."
+        placeholder="🔍 Pesquisar por título, artista, letra ou código..."
         oninput="handleSearch()"
         autocomplete="off">
     </div>
@@ -310,11 +302,13 @@
         const searchableTitle = normalizeForSort(music.title);
         const searchableArtist = normalizeForSort(music.artist);
         const searchableCode = normalizeForSort(music.code);
+        const searchableLyrics = normalizeForSort(music.lyrics || '');
 
         const matchSearch = !searchTerm || (
           searchableTitle.includes(searchTerm) ||
           searchableArtist.includes(searchTerm) ||
-          searchableCode.includes(searchTerm)
+          searchableCode.includes(searchTerm) ||
+          searchableLyrics.includes(searchTerm)
         );
 
         return matchFilter && matchSearch;
@@ -364,17 +358,14 @@
       const isFav = favorites.includes(id);
       favorites = isFav ? favorites.filter(f => f !== id) : [...favorites, id];
       localStorage.setItem('favorites', JSON.stringify(favorites));
-
       renderFilteredMusic();
     }
 
     function filterCategory(category) {
       currentSearch = '';
       document.getElementById('searchInput').value = '';
-
       document.querySelectorAll('.btn-category').forEach(btn => btn.classList.remove('active'));
       event?.target.classList.add('active');
-
       document.getElementById('searchContainer').style.display = 'block';
       currentFilter = category;
 
