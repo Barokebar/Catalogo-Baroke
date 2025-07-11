@@ -255,7 +255,7 @@
         musicContainer.innerHTML = `<div class="loading">Carregando músicas...</div>`;
         loadMoreContainer.style.display = 'none';
 
-        const response = await fetch('https://brk2-1ba1a.firebaseio.com/karaoke.json');
+        const response = await fetch('https://kara-e2f26.firebaseio.com/karaoke.json');
         const data = await response.json();
 
         allMusic = Object.entries(data).flatMap(([category, songs]) =>
